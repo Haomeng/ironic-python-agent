@@ -300,7 +300,8 @@ class IronicPythonAgent(base.ExecuteCommandMixin):
             self.listen_address[1],
             self.api,
             server_class=simple_server.WSGIServer)
-
+         
+        print self.listen_address
         if not self.standalone:
             # Don't start heartbeating until the server is listening
             self.heartbeater.start()
