@@ -30,7 +30,7 @@ def _execute(cmd, error_msg, **kwargs):
         LOG.error(error_msg)
         raise errors.ISCSICommandError(error_msg, e.exit_code,
                                        e.stdout, e.stderr)
-	return (stdout, stderr)
+    return (stdout, stderr)
 
 class CloneExtension(base.BaseAgentExtension):
     def __init__(self, agent=None):
