@@ -44,7 +44,7 @@ class CloneExtension(base.BaseAgentExtension):
         _execute(cmd, "Error when executing os command:" % cmd)
 
     @base.async_command('prepare_iscsi_disk')
-    def prepare_iscsi_disk(self, iscsi_ip):
+    def prepare_iscsi_disk(self, iscsi_ip, iqn):
         LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)
 	""""	    
         ls -l /dev/ | awk '{print $10}' > /tmp/fdisk-list-orig
