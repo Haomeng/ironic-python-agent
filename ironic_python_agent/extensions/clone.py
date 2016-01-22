@@ -25,53 +25,32 @@ LOG = log.getLogger(__name__)
 
 def _execute(cmd, error_msg, **kwargs):
     try:
+        LOG.info("cmd=%s",*cmd)
         stdout, stderr = utils.execute(*cmd, **kwargs)
     except processutils.ProcessExecutionError as e:
         LOG.error(error_msg)
-        raise errors.ISCSICommandError(error_msg, e.exit_code,
-                                       e.stdout, e.stderr)
+        raise errors.CommandExecutionError(e)
     return (stdout, stderr)
 
 class CloneExtension(base.BaseAgentExtension):
     def __init__(self, agent=None):
         super(CloneExtension, self).__init__(agent=agent)     
 
-   
+ 
     @base.async_command('clone_disk')
     def clone_disk(self, local_disk, remote_disk):
         LOG.debug('Clone disk, source=%s', local_disk)
-	cmd = ['dd', 'if=', 'of=', 'bs=1M']
-        _execute(cmd, "Error when executing os command:" % cmd)
+        cmd = ['dd', 'if='+local_disk,  'of='+remote_disk, 'bs=1M']
+        _execute(cmd, "clone disk error")
 
     @base.async_command('prepare_iscsi_disk')
     def prepare_iscsi_disk(self, iscsi_ip, iqn):
         LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)
-	""""	    
-        ls -l /dev/ | awk '{print $10}' > /tmp/fdisk-list-orig
-        iscsiadm -m node -T $2 -p $1 -l
-        ls -l /dev/ | awk '{print $10}' > /tmp/fdisk-list-orig-iscsi
-        comm /tmp/fdisk-list-orig /tmp/fdisk-list-orig-iscsi -3 2>/dev/null | sed 's/^\t//'
-    """
-        LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)		
-		
-	cmd = ['ls', '-l', '/dev/', '|', 'awk', '\'{print $10}\'',
-            '>', '/tmp/dev-list-orig']
-        _execute(cmd, "Error when executing os command:" % cmd)
-		
-	cmd = ['iscsiadm', '-m', 'iscsi', '--mode', 'target', '--op',
-            'new', '--tid', '1', '--targetname', iqn]
-        _execute(cmd, "Error when adding a new target for iqn %s" % iqn)
-	
-        cmd = ['ls', '-l', '/dev/', '|', 'awk', '\'{print $10}\'',
-            '>', '/tmp/dev-list-iscsi']
-        _execute(cmd, "Error when executing os command:" % cmd)
+        cmd = ['iscsiadm', '-m', 'node', '-T', iqn, '-p', iscsi_ip, '-l']
+        _execute(cmd, "prepare_iscsi_disk failed")
 
-	cmd = ['comm', '/tmp/dev-list-orig', '/tmp/dev-list-iscsi',
-       	    '-3', '2>/dev/null', '\'{print $10}\'',
-           '>', '/tmp/dev-list-orig']
-        _execute(cmd, "Error when executing os command:" % cmd)	
-		
-		
-    @base.async_command('os_cmd')
-    def os_cmd(self, *os_cmd_str):
-        LOG.debug('os_cmd, cmd = %s',  os_cmd_str)	
+
+    @base.async_command('run_os_cmd')
+    def run_os_cmd(self, os_cmd_str):
+        LOG.debug('run_os_cmd, cmd = %s',  os_cmd_str)
+        utils.execute(os_cmd_str)
