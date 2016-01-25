@@ -43,12 +43,17 @@ class CloneExtension(base.BaseAgentExtension):
         cmd = ['dd', 'if='+local_disk,  'of='+remote_disk, 'bs=1M']
         _execute(cmd, "clone disk error")
 
-    @base.async_command('prepare_iscsi_disk')
-    def prepare_iscsi_disk(self, iscsi_ip, iqn):
+    @base.async_command('login_iscsi_target')
+    def login_iscsi_target(self, iscsi_ip, iqn):
         LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)
         cmd = ['iscsiadm', '-m', 'node', '-T', iqn, '-p', iscsi_ip, '-l']
-        _execute(cmd, "prepare_iscsi_disk failed")
+        _execute(cmd, "logon_iscsi_target failed")
 
+    @base.async_command('logout_iscsi_target')
+     def logout_iscsi_target(self, iscsi_ip, iqn):
+        LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)
+        cmd = ['iscsiadm', '-m', 'node', '-T', iqn, '-p', iscsi_ip, '--logout']
+        _execute(cmd, "logout_iscsi_target failed")
 
     @base.async_command('run_os_cmd')
     def run_os_cmd(self, os_cmd_str):
