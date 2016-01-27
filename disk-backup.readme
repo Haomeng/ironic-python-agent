@@ -1,0 +1,13 @@
+New API
+======================
+I clone.clone_disk()
+A ironic_python_agent/extensions/clone.py
+P def clone_disk(self, iscsi_ip, iqn, lun)
+
+
+Example of client call 
+=======================
+curl -H "Content-Type: application/json" -d '{"name" : "clone.clone_disk","params":{"iscsi_ip":"127.0.0.1","iqn":"p1value", "lun":"lun-1"}}' localhost:9999/v1/commands
+
+
+
