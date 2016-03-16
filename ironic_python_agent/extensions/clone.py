@@ -54,23 +54,23 @@ def _prepare_iscsi_disk(iscsi_ip, iqn, lun):
 
 
 def _copy_disk(local_disk, remote_disk):
-    LOG.debug('copy disk, source=%s', local_disk)
-    cmd = ['dd', 'if=' + local_disk, 'of=' + remote_disk, 'bs=1M']
-    # _execute(cmd, "clone disk error")
-    print(cmd)
+    LOG.debug('copy disk, source=%s' % local_disk)
+    cmd = ['sudo', 'dd', 'if=' + local_disk, 'of=' + remote_disk, 'bs=1M']
+    _execute(cmd, "clone disk error")
+    LOG.debug('copied to %s' % remote_disk)
 
 
 class CloneExtension(base.BaseAgentExtension):
     def __init__(self, agent=None):
         super(CloneExtension, self).__init__(agent=agent)
 
-    @base.async_command('clone_disk')
+    @base.sync_command('clone_disk')
     def clone_disk(self, iscsi_ip, iqn, lun):
         remote_disk = _prepare_iscsi_disk(iscsi_ip, iqn, lun)
         local_disk = hardware.dispatch_to_managers('get_os_install_device')
         _copy_disk(local_disk, remote_disk)
 
-    @base.async_command('run_os_cmd')
+    @base.sync_command('run_os_cmd')
     def run_os_cmd(self, os_cmd_str):
         LOG.debug('run_os_cmd, cmd = %s', os_cmd_str)
         utils.execute(os_cmd_str)
