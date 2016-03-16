@@ -37,7 +37,7 @@ def _execute(cmd, error_msg, **kwargs):
 def _prepare_iscsi_disk(iscsi_ip, iqn, lun):
     LOG.debug('Preparing prepare_iscsi_disk, iscsi target ip=%s', iscsi_ip)
 
-    cmd = ['iscsiadm', '-m', 'node', '-T', iqn, '-p', iscsi_ip, '-l']
+    cmd = ['sudo', 'iscsiadm', '-m', 'node', '-T', iqn, '-p', iscsi_ip, '-l']
     _execute(cmd, "prepare_iscsi_disk failed")
 
     # check iscsi disk via cmd
